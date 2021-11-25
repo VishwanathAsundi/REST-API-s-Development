@@ -106,3 +106,46 @@ exports.signUp = (req, res, next) => {
       next(e);
     });
 };
+
+exports.getStatus = (req, res, next) => {
+  User.findById(req.userId)
+    .then(user => {
+      if (!user) {
+        const error = new Error("User is not authorized");
+        error.statusCode = 404;
+        throw error;
+      }
+      res.status(200).json({
+        status: user.status
+      });
+    })
+    .catch(e => {
+      if (!e.statusCode) {
+        e.statusCode = 500;
+      }
+      next(e);
+    });
+};
+
+exports.updateStatus = (req, res, next) => {
+  const status = req.body.status;
+  User.findById(req.userId)
+    .then(user => {
+      if (!user) {
+        const error = new Error("User not found");
+        error.statusCode = 404;
+        throw error;
+      }
+      user.status = status;
+      return user.save();
+    })
+    .then(result => {
+      res.status(200).json({ message: "Status updated successfully" });
+    })
+    .catch(e => {
+      if (!e.statusCode) {
+        e.statusCode = 500;
+      }
+      next(e);
+    });
+};

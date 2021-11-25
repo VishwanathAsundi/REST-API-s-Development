@@ -4,6 +4,7 @@ const User = require("../models/user");
 
 const router = express.Router();
 const authController = require("../controllers/auth");
+const isAuth = require("../middleware/is-auth");
 
 router.post(
   "/signup",
@@ -43,5 +44,9 @@ router.post(
   ],
   authController.login
 );
+
+router.get("/status", isAuth, authController.getStatus);
+
+router.patch("/status", isAuth, authController.updateStatus);
 
 module.exports = router;
