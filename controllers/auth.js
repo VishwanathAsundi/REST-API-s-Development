@@ -68,6 +68,23 @@ exports.signUp = (req, res, next) => {
   const password = req.body.password;
   const name = req.body.name;
 
+  User.findOne({ email: email })
+    .then(emailExist => {
+      console.log(emailExist, "emailExist");
+      if (emailExist) {
+        const err = new Error("Email already exists");
+        err.statusCode = 422;
+        err.data = errors.array();
+        throw err;
+      }
+    })
+    .catch(e => {
+      if (!e.statusCode) {
+        e.statusCode = 422;
+      }
+      next(e);
+    });
+
   bcrypt
     .hash(password, 12)
     .then(hashedPwd => {
