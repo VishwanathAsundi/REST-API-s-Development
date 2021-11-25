@@ -60,8 +60,12 @@ mongoose
     "mongodb+srv://xyz:ko28NUr5WaJWB4AP@cluster0.6lk21.mongodb.net/messages?retryWrites=true&w=majority"
   )
   .then(res => {
-    app.listen(8080, () => {
+    const server = app.listen(8080, () => {
       console.log("connected to 8080");
+    });
+    const io = require("./socket").init(server);
+    io.on("connection", socket => {
+      console.log("Client connected");
     });
   })
   .catch(e => {
